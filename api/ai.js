@@ -3,7 +3,7 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: "Only POST allowed" });
   }
 
-  const { message, history } = req.body;
+  const { message } = req.body;
 
   const response = await fetch("https://api.openai.com/v1/chat/completions", {
     method: "POST",
@@ -14,8 +14,7 @@ export default async function handler(req, res) {
     body: JSON.stringify({
       model: "gpt-4o-mini",
       messages: [
-        { role: "system", content: "You are a friendly NPC in Roblox, talk naturally, short sentences." },
-        ...(history || []),
+        { role: "system", content: "You are a Roblox NPC, short natural replies." },
         { role: "user", content: message }
       ]
     })
@@ -23,7 +22,7 @@ export default async function handler(req, res) {
 
   const data = await response.json();
 
-  const reply = data.choices?.[0]?.message?.content || "..."
-
-  res.json({ reply });
+  res.json({
+    reply: data.choices?.[0]?.message?.content || "..."
+  });
 }
